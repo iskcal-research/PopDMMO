@@ -42,7 +42,7 @@ classdef DMMOP < DynamicProblem
             obj.hub.D = D;
             obj.hub.lower = -5 .* ones(1, D);
             obj.hub.upper = 5 .* ones(1, D);
-            obj.hub.freq = 10000 * D;
+            obj.hub.freq = 3000 * D;
             obj.hub.evaluation = 60 * obj.hub.freq;
         end
         

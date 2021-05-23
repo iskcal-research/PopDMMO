@@ -1,13 +1,17 @@
 function running(test_algorithms, test_problems, num)
     max_run = 30;
+    
+%     test_algorithms = {{@DynamicNichingDE, 1, 1}};
+%     test_problems = {{@DMMOP, 1, 1, 5}};
+%     num = 2;
 
     if ~exist(sprintf('./Data/EX%d', num),'dir')
         mkdir(sprintf('./Data/EX%d', num));
     end
 
     % algorithm
-    for alg = 1%:length(test_algorithms) 
-        for pro = 1%:length(test_problems)
+    for alg = 1:length(test_algorithms)
+        for pro = 1:length(test_problems)
             fprintf('Algorithm (%d) to solve Problem (%d) is running\n', alg, pro);
             try
                 delete(gcp('nocreate'));

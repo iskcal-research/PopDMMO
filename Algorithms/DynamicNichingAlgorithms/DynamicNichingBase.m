@@ -15,7 +15,7 @@ classdef DynamicNichingBase < DynamicAlgorithm
         end
         
         function Evolve(obj)
-%             disp(obj.hub.evaluated);
+%             disp([obj.hub.run, obj.hub.evaluated]);
             obj.niching = obj.GetNiching();
             next_pop = obj.pop;
             for i = 1:length(obj.niching)

@@ -6,7 +6,7 @@ function niching = speciation_radius(decs, fit, N_o, D, lower, upper)
     species = zeros(N, 1);
     niching = cell(0);
     
-    r_s = (pdist2(upper, lower) / 2 ) / (N_o ^ (1/D));
+    delta_s = (pdist2(upper, lower) / 2 ) / (N_o ^ (1/D));
     
     for i = 1:N
         cur_idx = sort_idx(i);
@@ -16,7 +16,7 @@ function niching = speciation_radius(decs, fit, N_o, D, lower, upper)
             species(cur_idx) = length(niching);
         else
             dis = pdist2(decs(cur_idx, :), decs(seeds, :));
-            if all(dis > r_s) 
+            if all(dis > delta_s / 2) 
                 seeds = [seeds; cur_idx];
                 niching{end+1} = cur_idx;
                 species(cur_idx) = length(niching);

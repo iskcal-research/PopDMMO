@@ -35,7 +35,8 @@ classdef DynamicNichingCSA < DynamicNichingBase
         function offspring = GetOffspring(obj, select_idx)
             n = length(select_idx);
             if n == 1
-                offspring = [];
+                %offspring = [];
+                offspring = obj.pop(select_idx);
                 return;
             end
             pop = obj.pop(select_idx);

@@ -2,7 +2,7 @@ function [pop, mem] = use_memory(algRand, pop, mem, mem_size, seeds_idx, N, D, l
     pop = Hub.GetIns().GetIndis(pop.decs);
     if ~isempty(mem)
         mem = Hub.GetIns().GetIndis(mem.decs);
-        [~, mem_sort_idx] = sort(mem.fits);
+        [~, mem_sort_idx] = sort(mem.fits, 'descend');
         mem = mem(mem_sort_idx);
     end
 
@@ -12,6 +12,9 @@ function [pop, mem] = use_memory(algRand, pop, mem, mem_size, seeds_idx, N, D, l
 %     end
 
     temp = pop(seeds_idx);
+    [~, temp_sort_idx] = sort(temp.fits, 'descend');
+    temp = temp(temp_sort_idx);
+    
     [~, sort_idx] = sort(pop.fits, 'descend');
     pop = pop(sort_idx);
 
@@ -24,7 +27,7 @@ function [pop, mem] = use_memory(algRand, pop, mem, mem_size, seeds_idx, N, D, l
     pop(i+1:end) = Hub.GetIns().GetIndis(rand_indi(algRand, N - i, D, lower, upper));
 
     % disp(obj.global_.evaluated);
-    for i = 1:length(temp)
+    for i = length(temp):-1:1
         if length(mem) < mem_size
             mem = [mem; temp(i)];
         else

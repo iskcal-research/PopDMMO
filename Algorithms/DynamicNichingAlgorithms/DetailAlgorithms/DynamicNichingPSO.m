@@ -53,8 +53,10 @@ classdef DynamicNichingPSO < DynamicNichingBase
         
         %% dynamic response 
         function RespondChange(obj)
+            obj.pop = obj.pbest;
             RespondChange@DynamicNichingBase(obj);
             obj.pop.SetAdds(struct("v", zeros(obj.hub.N, obj.hub.D)));
+            obj.pbest = obj.pop;
         end
     end
 end
