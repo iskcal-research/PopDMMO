@@ -155,7 +155,10 @@ classdef DMMOP < DynamicProblem
                     [obj.x, obj.x_angel] = obj.ChangeMatrix(obj.x, obj.x_initial, obj.hub.lower, obj.hub.upper, obj.x_angel);
                     for i = 1:length(obj.M)
                         [obj.M{i}, obj.M_angel(i)] = obj.ChangeMatrix(obj.M{i}, obj.M_initial{i}, -1 * ones(1, obj.hub.D), 1 * ones(1, obj.hub.D), obj.M_angel(i));
-                        obj.M{i} = orth(obj.M{i}); % todo É¾³ý
+                        %obj.M{i} = orth(obj.M{i}); % todo É¾³ý
+                        if ~all(round(obj.M{i} * obj.M{i}') == eye(size(obj.M{i})), 'all')
+                            error('no orth matrix');
+                        end
                     end
                 end
                 obj.x = obj.SetMinDistance(obj.x);
@@ -241,7 +244,10 @@ classdef DMMOP < DynamicProblem
                 else % composition functions
                     for i = 1:length(obj.M)
                         [obj.M{i}, obj.M_angel(i)] = obj.ChangeMatrix(obj.M{i}, obj.M_initial{i}, -1 * ones(1, obj.hub.D), 1 * ones(1, obj.hub.D), obj.M_angel(i));                        
-                        obj.M{i} = orth(obj.M{i}); % todo É¾³ý
+                        %obj.M{i} = orth(obj.M{i}); % todo É¾³ý
+                        if ~all(round(obj.M{i} * obj.M{i}') == eye(size(obj.M{i})), 'all')
+                            error('no orth matrix');
+                        end
                     end
                 end
                 

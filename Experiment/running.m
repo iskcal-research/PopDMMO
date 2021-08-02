@@ -8,6 +8,9 @@ function running(test_algorithms, test_problems, num)
     if ~exist(sprintf('./Data/EX%d', num),'dir')
         mkdir(sprintf('./Data/EX%d', num));
     end
+    if ~exist(sprintf('./Data/EX%d/Detail', num),'dir')
+        mkdir(sprintf('./Data/EX%d/Detail', num));
+    end
 
     % algorithm
     for alg = 1:length(test_algorithms)
@@ -21,9 +24,12 @@ function running(test_algorithms, test_problems, num)
                     result = hub.Start();
                 end
                 result = cat(1, result{1:end});
+                pr_env = result(:, 1:3)./result(:, 4);
                 pr = sum(result);
                 pr = pr(1:end-1)/pr(end);
-                dlmwrite(sprintf('./Data/EX%d/A%d-P%d', num, alg, pro), pr);
+                pr_std = std(pr_env);
+                dlmwrite(sprintf('./Data/EX%d/A%d-P%d', num, alg, pro), [pr; pr_std]);
+                dlmwrite(sprintf('./Data/EX%d/Detail/A%d-P%d', num, alg, pro), pr_env);
             catch exception
                 fileID = fopen(sprintf('./Data/EX%d/A%d-P%d-ERRORERROR', num, alg, pro), 'w');
                 fprintf(fileID, sprintf('The Algorithm (%d) to solve Problem (%d) in Experiment (%d) is error.\r\n', alg, pro, num));
