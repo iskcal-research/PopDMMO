@@ -44,7 +44,7 @@ classdef DMMOP < DynamicProblem
             obj.hub.lower = -5 .* ones(1, D);
             obj.hub.upper = 5 .* ones(1, D);
             obj.hub.freq = 5000 * D;
-            obj.hub.evaluation = obj.maxEnv * obj.hub.freq;
+            obj.hub.evaluation = 60 * obj.hub.freq;
             obj.rs = struct();
         end
         
@@ -80,7 +80,7 @@ classdef DMMOP < DynamicProblem
                         obj.ln = 0;
                         obj.h = ones(obj.gn_max, 1) .* h_global;
                         obj.w = ones(obj.gn_max+obj.ln, 1) .* 5;
-                        obj.x = repmat([-3;-2;0;4]+0.5, 1, obj.hub.D);
+                        obj.x = repmat([-3;-2;0;4], 1, obj.hub.D);
                     case 4 % simulate modified Rastrigin function
                         obj.ln = 0;
                         obj.h = ones(obj.gn_max, 1) .* h_global;
@@ -234,7 +234,6 @@ classdef DMMOP < DynamicProblem
                     % adopt the C1 to change the parameters
                     type = obj.change_type;
                     obj.change_type = 1;
-                    obj.env = obj.env - 1; % prevent from adding again
                     obj.ChangeDynamic();
                     obj.change_type = type;
                     return;
@@ -246,7 +245,7 @@ classdef DMMOP < DynamicProblem
                     obj.w = dynamic_change(obj.proRand, obj.w, obj.change_type, obj.w_bound(1), obj.w_bound(2), obj.w_s, obj.env);
                 else % composition functions
                     for i = 1:length(obj.M)
-                        [obj.M{i}, obj.M_angel(i)] = obj.ChangeMatrix(obj.M{i}, obj.M_initial{i}, -1 * ones(1, obj.hub.D), 1 * ones(1, obj.hub.D), obj.M_angel(i), sprintf('M%d', i));                        
+                        [obj.M{i}, obj.M_angel(i)] = obj.ChangeMatrix(obj.M{i}, obj.M_initial{i}, -1 * ones(1, obj.hub.D), 1 * ones(1, obj.hub.D), obj.M_angel(i));                        
                         %obj.M{i} = orth(obj.M{i}); % todo É¾³ý
                         if ~all(round(obj.M{i} * obj.M{i}') == eye(size(obj.M{i})), 'all')
                             error('no orth matrix');
@@ -255,7 +254,7 @@ classdef DMMOP < DynamicProblem
                 end
                 
                 % change the position of the optimal solutions
-                [obj.x, obj.x_angel] = obj.ChangeMatrix(obj.x, obj.x_initial, obj.hub.lower, obj.hub.upper, obj.x_angel, 'x');
+                [obj.x, obj.x_angel] = obj.ChangeMatrix(obj.x, obj.x_initial, obj.hub.lower, obj.hub.upper, obj.x_angel);
                 obj.x = obj.SetMinDistance(obj.x);
                 
 %                 disp(obj.hub.evaluated);
@@ -321,16 +320,14 @@ classdef DMMOP < DynamicProblem
                 phi_max = pi/6;
                 m = m_initial;
                 if (obj.env >= 12)
-                    r = obj.rs.(name)(rem(obj.env, 12)+1, :);
+                    r = obj.rs.(name).(rem(obj.env, 12)+1);
                 end
             else
                 phi_min = -pi;
                 phi_max = pi;
             end
-            if ~isfield(obj.rs, name)
-                obj.rs.(name) = zeros(obj.maxEnv, l);
-            end                
-            obj.rs.(name)(obj.env+1, :) = r;
+            if isfi
+            obj.rs.(name) = [obj.rs.(name); r];
             if ismember(obj.change_type, [1,2,3])
                 old_theta = 0;
             end
