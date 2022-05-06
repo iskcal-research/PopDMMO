@@ -1,5 +1,5 @@
-function running(test_algorithms, test_problems, num)
-    max_run = 30;
+function running(test_algorithms, test_problems, num, debug)
+    max_run = 2;
     
 %     test_algorithms = {{@DynamicNichingDE, 1, 1}};
 %     test_problems = {{@DMMOP, 1, 1, 5}};
@@ -17,17 +17,27 @@ function running(test_algorithms, test_problems, num)
         for pro = 1:length(test_problems)
             fprintf('Algorithm (%d) to solve Problem (%d) is running\n', alg, pro);
             try
-                delete(gcp('nocreate'));
-                parpool('local',max_run);
-                spmd(max_run)
-                    hub = Hub(test_algorithms{alg}, test_problems{pro}, 'run', labindex);
+                if ~debug
+                    delete(gcp('nocreate'));
+                    parpool('local',max_run);
+                    spmd(max_run)
+                        hub = Hub(test_algorithms{alg}, test_problems{pro}, 'run', labindex);
+                        result = hub.Start();
+                    end
+                    result = cat(1, result{1:end});
+                    pr_env = result(:, 1:3)./result(:, 4);
+                else
+                    hub = Hub(test_algorithms{alg}, test_problems{pro}, 'run', 1);
                     result = hub.Start();
+                    pr_env = result(1:3) ./ result(4);
                 end
-                result = cat(1, result{1:end});
-                pr_env = result(:, 1:3)./result(:, 4);
-                pr = sum(result);
+                pr = sum(result, 1);
                 pr = pr(1:end-1)/pr(end);
-                pr_std = std(pr_env);
+                pr_std = zeros(1, 3);
+                for ss = 1:3
+                    pr_std(ss) = std(pr_env(:, ss));
+                end
+                
                 dlmwrite(sprintf('./Data/EX%d/A%d-P%d', num, alg, pro), [pr; pr_std]);
                 dlmwrite(sprintf('./Data/EX%d/Detail/A%d-P%d', num, alg, pro), pr_env);
             catch exception

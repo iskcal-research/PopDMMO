@@ -1,5 +1,6 @@
 function ex3()
-    
+    debug = false;
+
     test_algorithms = {
         {@DynamicNichingDE, 3, 0}, ...
         {@DynamicNichingDE, 3, 1}, ...
@@ -26,7 +27,7 @@ function ex3()
         {@DMMOP, 8, 8, 5}, ...
     };
     
-    running(test_algorithms, test_problems, 3);
+    running(test_algorithms, test_problems, 3, debug);
 %     % algorithm
 %     for alg = 1:length(test_algorithms) 
 %         for pro = 1:length(test_problems)
